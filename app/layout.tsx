@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Space_Grotesk, Space_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SWRProvider } from "@/components/providers/swr-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,14 +8,15 @@ import { APP_INFO } from "@/lib/configs/app-info";
 import { ThemeProvider } from "@/lib/contexts/theme-context";
 import "./globals.css";
 
-const geistSans = Geist({
-	variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
+	variable: "--font-space-grotesk",
 	subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
+const spaceMono = Space_Mono({
+	variable: "--font-space-mono",
 	subsets: ["latin"],
+	weight: "400",
 });
 
 const fraunces = Fraunces({
@@ -36,7 +37,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
-				className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
+				className={`${spaceGrotesk.variable} ${spaceMono.variable} ${fraunces.variable} antialiased`}
 			>
 				<ThemeProvider
 					attribute="class"

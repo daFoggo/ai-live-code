@@ -1,8 +1,8 @@
-import React from 'react'
+import { ExerciseDetail } from "@/features/exercises"
 
 const ExerciseDetailPage = () => {
   return (
-    <div>ExerciseDetailPage</div>
+    <ExerciseDetail/>
   )
 }
 
