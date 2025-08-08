@@ -6,7 +6,7 @@ import ExerciseTable from "./exercises-table";
 export const Exercises = () => {
     return (
         <div className="flex flex-col gap-6">
-            <PageHeading title="Danh sách bài tập" />
+            <PageHeading title="Problem list" />
             <ExerciseTable />
         </div>
     )

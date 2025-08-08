@@ -15,17 +15,17 @@ export const ExerciseLevelBadge = ({
 		switch (level) {
 			case EXERCISE_LEVEL.EASY:
 				return {
-					text: "Dễ",
+					text: "Easy",
 					className: "bg-green-500/10 text-green-500",
 				};
 			case EXERCISE_LEVEL.MEDIUM:
 				return {
-					text: "Trung bình",
+					text: "Medium",
 					className: "bg-yellow-500/10 text-yellow-500",
 				};
 			case EXERCISE_LEVEL.HARD:
 				return {
-					text: "Khó",
+					text: "Hard",
 					className: "bg-red-500/10 text-red-500",
 				};
 			default:

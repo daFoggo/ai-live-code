@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/lib/hooks/use-data-table";
-import { useExercisesManagementSWR } from "../hooks/user-exercises-management-swr";
+import { useExercisesManagementSWR } from "../hooks/use-exercises-management-swr";
 import type { IExercise } from "../utils/types";
 import { getExercisesColumnConfig } from "./exercsies-column-config";
 

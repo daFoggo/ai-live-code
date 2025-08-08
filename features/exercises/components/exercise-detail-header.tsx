@@ -29,7 +29,7 @@ const HeaderLeftSection = () => {
 			<Breadcrumb className="hidden lg:block w-fit">
 				<BreadcrumbList>
 					<BreadcrumbItem>
-						<BreadcrumbLink href="/exercises">Danh sách bài tập</BreadcrumbLink>
+						<BreadcrumbLink href="/exercises">Problem list</BreadcrumbLink>
 					</BreadcrumbItem>
 					<BreadcrumbSeparator>
 						<SlashIcon />

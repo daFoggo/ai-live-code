@@ -1,5 +1,5 @@
 "use client";
-import { BugPlay, NotebookPen, SendHorizontal, SquareCode } from "lucide-react";
+import { BugPlay, NotebookPen, Play, SendHorizontal } from "lucide-react";
 import { AsyncButton } from "@/components/common/async-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,10 +25,7 @@ const ExerciseToolBar = () => {
 				{/* Run code */}
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<AsyncButton
-							className="rounded-none"
-							icon={<SquareCode />}
-						/>
+						<AsyncButton className="rounded-none" icon={<Play />} />
 					</TooltipTrigger>
 					<TooltipContent>
 						<p>Run code</p>

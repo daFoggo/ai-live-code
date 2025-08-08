@@ -145,12 +145,12 @@ export function ErrorPage({
 							</div>
 					
 							<div className="space-y-3">
-								<h1 className="font-bold text-muted-foreground/80 text-7xl sm:text-8xl tracking-tight">
+								<p className="font-bold text-muted-foreground/80 text-7xl sm:text-8xl tracking-tight">
 									{errorCode}
-								</h1>
-								<h2 className="font-semibold text-foreground text-2xl sm:text-3xl">
+								</p>
+								<p className="font-semibold text-foreground text-2xl sm:text-3xl">
 									{title || config.title}
-								</h2>
+								</p>
 							</div>
 						
 							<p className="max-w-md text-muted-foreground text-base sm:text-lg leading-relaxed">

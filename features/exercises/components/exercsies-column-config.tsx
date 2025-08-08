@@ -14,7 +14,7 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 		{
 			id: "index",
 			header: ({ column }: { column: Column<IExercise, unknown> }) => (
-				<DataTableColumnHeader column={column} title="STT" className="flex justify-center items-center w-full text-center" />
+				<DataTableColumnHeader column={column} title="Index" className="flex justify-center items-center w-full text-center" />
 			),
 			cell: ({ row, table }) => {
 				const sortedRows = table.getSortedRowModel().flatRows;
@@ -35,7 +35,7 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 				);
 			},
 			meta: {
-				label: "STT",
+				label: "Index",
 			},
 			enableSorting: false,
 			enableColumnFilter: false,
@@ -61,7 +61,7 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 			id: "name",
 			accessorKey: "name",
 			header: ({ column }: { column: Column<IExercise, unknown> }) => (
-				<DataTableColumnHeader column={column} title="Tên bài" />
+				<DataTableColumnHeader column={column} title="Problem name" />
 			),
 			cell: ({ cell }) => (
 				<div className="font-semibold">
@@ -69,8 +69,8 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 				</div>
 			),
 			meta: {
-				label: "Tên bài",
-				placeholder: "Tìm theo tên bài",
+				label: "Problem name",
+				placeholder: "Search by problem name",
 				variant: "text",
 			},
 			enableColumnFilter: true,
@@ -79,7 +79,7 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 			id: "statement",
 			accessorKey: "statement",
 			header: ({ column }: { column: Column<IExercise, unknown> }) => (
-				<DataTableColumnHeader column={column} title="Mô tả" />
+				<DataTableColumnHeader column={column} title="Description" />
 			),
 			cell: ({ cell }) => {
 				const statement = cell.getValue<IExercise["statement"]>();
@@ -90,7 +90,7 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 				);
 			},
 			meta: {
-				label: "Mô tả",
+				label: "Description",
 			},
 			enableSorting: false,
 			size: 300,
@@ -99,13 +99,13 @@ export const getExercisesColumnConfig = (): ColumnDef<IExercise>[] => {
 			id: "level",
 			accessorKey: "level",
 			header: ({ column }: { column: Column<IExercise, unknown> }) => (
-				<DataTableColumnHeader column={column} title="Mức độ" />
+				<DataTableColumnHeader column={column} title="Level" />
 			),
 			cell: ({ cell }) => (
 				<ExerciseLevelBadge level={cell.getValue<IExercise["level"]>()} />
 			),
 			meta: {
-				label: "Mức độ",
+				label: "Level",
 				variant: "multiSelect",
 				options: enumsToOptions(EXERCISE_LEVEL),
 			},

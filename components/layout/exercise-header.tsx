@@ -13,7 +13,7 @@ import { Separator } from "../ui/separator";
 
 const HeaderLeftSection = () => {
 	const navbarItems: INavItem[] = [
-		{ title: "Danh sách bài tập", url: "/exercises", icon: LibraryBig },
+		{ title: "Problem list", url: "/exercises", icon: LibraryBig },
 	];
 
 	return (

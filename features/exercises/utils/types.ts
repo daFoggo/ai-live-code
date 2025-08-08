@@ -1,4 +1,4 @@
-import type { EXERCISE_LEVEL } from "./constants";
+import type { EXERCISE_LEVEL, REVIEW_MODE } from "./constants";
 
 export interface IExercise {
   id: string;
@@ -22,4 +22,17 @@ export interface IStep {
   title: string;
   description: string;
   code: string;
+}
+
+export interface ICodeLanguage {
+  id: string;
+  name: string;
+  code_snippet?: string;
+}
+
+export interface ICodeEditorSettings {
+  codeReview: {
+    mode: REVIEW_MODE;
+    showInstructions: boolean;
+  };
 }
