@@ -12,8 +12,8 @@ export enum REVIEW_MODE {
 }
 
 export enum STEP_STATUS {
-  PASSED = 1,
   NOT_PASSED = 0,
+  PASSED = 1,
 }
 
 export const SUPPORTED_CODE_LANGUAGES: ICodeLanguage[] = [

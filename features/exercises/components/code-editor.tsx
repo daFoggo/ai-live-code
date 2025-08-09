@@ -2,7 +2,7 @@
 
 import type { editor } from "monaco-editor";
 import dynamic from "next/dynamic";
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader } from "@/components/common/loaders";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/select";
 import { useSettings } from "../contexts/code-editor-settings-context";
 import { REVIEW_MODE, SUPPORTED_CODE_LANGUAGES } from "../utils/constants";
-import type { IStep } from "../utils/types";
+import type { IExercise, IStep } from "../utils/types";
 import CodeEditorSettings from "./code-editor-settings";
 import CodeReviewer from "./code-reviewer";
-import StepInfo from "./step-info";
+import StepInfo, { type IStepWithStatus } from "./step-info";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 	ssr: false,
@@ -29,8 +29,10 @@ type MonacoEditor = editor.IStandaloneCodeEditor;
 
 interface ICodeEditorProps {
 	stepsData: IStep[];
+	exerciseData?: IExercise;
 }
-const CodeEditor = ({ stepsData }: ICodeEditorProps) => {
+
+const CodeEditor = ({ stepsData, exerciseData }: ICodeEditorProps) => {
 	const [language, setLanguage] = useState<string>(
 		SUPPORTED_CODE_LANGUAGES[0].id,
 	);
@@ -38,8 +40,68 @@ const CodeEditor = ({ stepsData }: ICodeEditorProps) => {
 		SUPPORTED_CODE_LANGUAGES[0].code_snippet || "",
 	);
 	const [currentStep, setCurrentStep] = useState<number>(0);
+	const [shouldRequestReviewNow, setShouldRequestReviewNow] =
+		useState<boolean>(false);
+	const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
 
 	const { settings } = useSettings();
+
+	const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+	// auto review when code change and 30s non touch
+	const handleCodeChange = (newCode: string | undefined) => {
+		setCode(newCode ?? "");
+
+		if (debounceTimerRef.current) {
+			clearTimeout(debounceTimerRef.current);
+		}
+
+		setShouldRequestReviewNow(false);
+
+		debounceTimerRef.current = setTimeout(() => {
+			setShouldRequestReviewNow(true);
+		}, 30000);
+	};
+
+	useEffect(() => {
+		return () => {
+			if (debounceTimerRef.current) {
+				clearTimeout(debounceTimerRef.current);
+			}
+		};
+	}, []);
+
+	useEffect(() => {
+		if (shouldRequestReviewNow) {
+			const resetTimer = setTimeout(() => {
+				setShouldRequestReviewNow(false);
+			}, 1000);
+
+			return () => clearTimeout(resetTimer);
+		}
+	}, [shouldRequestReviewNow]);
+
+	const exampleCode = useMemo(() => {
+		if (settings.codeReview.mode === REVIEW_MODE.STEP_CODE) {
+			return stepsData[currentStep]?.code || "";
+		} else {
+			return exerciseData?.example_code || "";
+		}
+	}, [settings.codeReview.mode, stepsData, currentStep, exerciseData]);
+
+	const stepDescription = useMemo(() => {
+		if (settings.codeReview.mode === REVIEW_MODE.STEP_CODE) {
+			return stepsData[currentStep]?.description || "";
+		}
+		return "";
+	}, [settings.codeReview.mode, stepsData, currentStep]);
+
+	const stepsWithStatus = useMemo((): IStepWithStatus[] => {
+		return stepsData.map((step, index) => ({
+			...step,
+			isCompleted: completedSteps.has(index),
+		}));
+	}, [stepsData, completedSteps]);
 
 	const handleChangeCodeLanguage = (id: string) => {
 		const selectedLanguage = SUPPORTED_CODE_LANGUAGES.find(
@@ -48,6 +110,15 @@ const CodeEditor = ({ stepsData }: ICodeEditorProps) => {
 		if (selectedLanguage) {
 			setLanguage(selectedLanguage.id);
 			setCode(selectedLanguage.code_snippet || "");
+		}
+	};
+
+	const handleStepCompleted = (stepIndex: number) => {
+		setCompletedSteps((prev) => new Set(prev).add(stepIndex));
+
+		// Auto advance to next step if available
+		if (stepIndex === currentStep && stepIndex < stepsData.length - 1) {
+			setCurrentStep(stepIndex + 1);
 		}
 	};
 
@@ -86,19 +157,20 @@ const CodeEditor = ({ stepsData }: ICodeEditorProps) => {
 
 					{/* Chatbot */}
 					<CodeReviewer
-						hasNewReview={false}
-						isReviewing={false}
-						reviewMessages={[]}
+						currentCode={code}
+						exerciseData={exerciseData}
+						exampleCode={exampleCode}
+						stepDescription={stepDescription}
+						shouldRequestReviewNow={shouldRequestReviewNow}
+						currentStep={currentStep}
+						onStepCompleted={handleStepCompleted}
 					/>
 				</div>
 
 				{settings.codeReview.mode === REVIEW_MODE.STEP_CODE &&
 					settings.codeReview.showInstructions && (
 						<StepInfo
-							stepDatas={
-								stepsData?.map((step) => ({ ...step, isCompleted: false })) ||
-								[]
-							}
+							stepDatas={stepsWithStatus}
 							currentStep={currentStep}
 							onStepClick={setCurrentStep}
 						/>
@@ -111,7 +183,7 @@ const CodeEditor = ({ stepsData }: ICodeEditorProps) => {
 					width="100%"
 					language={language === "python" ? "python" : language}
 					value={code}
-					onChange={(val) => setCode(val ?? "")}
+					onChange={handleCodeChange}
 					onMount={handleEditorDidMount}
 					options={{
 						fontSize: 14,

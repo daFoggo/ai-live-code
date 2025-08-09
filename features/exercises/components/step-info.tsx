@@ -75,7 +75,7 @@ export default function StepInfo({
 								</div>
 								<div className="flex-1 min-w-0">
 									<div className="font-medium text-foreground text-sm">
-										{currentStepData?.title || "Không có tiêu đề"}
+										{currentStepData?.title || "No title provided"}
 									</div>
 								</div>
 							</div>
@@ -155,7 +155,7 @@ export default function StepInfo({
 										content={currentStepData.description}
 									/>
 								) : (
-									<p>Không có nội dung cho bước này.</p>
+									<p>No instruction was provided for this step.</p>
 								)}
 							</div>
 						</div>

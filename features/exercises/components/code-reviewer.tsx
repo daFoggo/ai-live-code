@@ -1,9 +1,11 @@
-import { BotMessageSquare, Loader2, MessageCircleDashed } from "lucide-react";
-import { useState } from "react";
+"use client";
+
+import { BotMessageSquare, SearchCode, Send } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AsyncButton } from "@/components/common/async-button";
-import EmptyData from "@/components/common/empty-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	Sheet,
 	SheetClose,
@@ -14,42 +16,165 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from "@/components/ui/sheet";
+import { useSettings } from "../contexts/code-editor-settings-context";
+import { useAIReviewSWR } from "../hooks/use-ai-review-swr";
+import { REVIEW_MODE, STEP_STATUS } from "../utils/constants";
+import type { IExercise, IMessage } from "../utils/types";
+import MessageList from "./message-list";
 
 interface ICodeReviewerProps {
-	hasNewReview: boolean;
-	isReviewing: boolean;
-	reviewMessages?: string[];
+	currentCode: string;
+	exampleCode: string;
+	stepDescription: string;
+	shouldRequestReviewNow: boolean;
+	exerciseData?: IExercise;
+	currentStep: number;
+	onStepCompleted: (stepIndex: number) => void;
 }
 
 const CodeReviewer = ({
-	hasNewReview,
-	isReviewing,
-	reviewMessages,
+	currentCode,
+	exampleCode,
+	stepDescription,
+	shouldRequestReviewNow,
+	exerciseData,
+	currentStep,
+	onStepCompleted,
 }: ICodeReviewerProps) => {
+	const [hasNewReview, setHasNewReview] = useState(false);
 	const [hasSeenLatestReview, setHasSeenLatestReview] = useState(false);
+	const [reviewMessages, setReviewMessages] = useState<IMessage[]>([]);
+	const [chatInput, setChatInput] = useState("");
+	const [lastReviewedCode, setLastReviewedCode] = useState("");
+	const [isSheetOpen, setIsSheetOpen] = useState(false);
+	const processingRef = useRef(false);
+	const lastProcessedReviewId = useRef<string | null>(null);
+
+	const { aiReviewData, requestAIReview, isProcessingAIReview } =
+		useAIReviewSWR();
+	const { settings } = useSettings();
+
+	const stableOnStepCompleted = useCallback(
+		(stepIndex: number) => {
+			onStepCompleted(stepIndex);
+		},
+		[onStepCompleted],
+	);
+
+	useEffect(() => {
+		if (
+			aiReviewData &&
+			aiReviewData.metadata.messageId !== lastProcessedReviewId.current
+		) {
+			lastProcessedReviewId.current = aiReviewData.metadata.messageId;
+			setReviewMessages((prev) => {
+				const messageExists = prev.some(
+					(msg) => msg.metadata.messageId === aiReviewData.metadata.messageId,
+				);
+				if (messageExists) {
+					return prev;
+				}
+				return [...prev, aiReviewData];
+			});
+			setHasNewReview(true);
+			setHasSeenLatestReview(false);
+			if (
+				aiReviewData.stepStatus === STEP_STATUS.PASSED &&
+				settings.codeReview.mode === REVIEW_MODE.STEP_CODE
+			) {
+				setTimeout(() => {
+					stableOnStepCompleted(currentStep);
+				}, 0);
+			}
+		}
+	}, [
+		aiReviewData,
+		currentStep,
+		stableOnStepCompleted,
+		settings.codeReview.mode,
+	]);
 
 	const shouldShowBadge = hasNewReview && !hasSeenLatestReview;
 
-	const handleSheetOpen = () => {
-		setHasSeenLatestReview(true);
-	};
+	const handleSheetOpenChange = useCallback((open: boolean) => {
+		setIsSheetOpen(open);
+		if (open) {
+			setHasSeenLatestReview(true);
+		} else {
+			setHasNewReview(false);
+		}
+	}, []);
 
-	if (hasNewReview && hasSeenLatestReview) {
-		setHasSeenLatestReview(false);
-	}
+	const handleRequestReview = useCallback(async () => {
+		if (!currentCode.trim() || processingRef.current) return;
+		try {
+			processingRef.current = true;
+			await requestAIReview({
+				inputs: {
+					mode: settings.codeReview.mode,
+					purpose: exerciseData?.statement || "",
+					example_code: exampleCode,
+					user_code: currentCode,
+					step_description:
+						settings.codeReview.mode === REVIEW_MODE.STEP_CODE
+							? stepDescription
+							: undefined,
+				},
+				response_mode: "blocking",
+				user: "abc-123",
+			});
+		} catch (error) {
+			console.error("Failed to request AI review:", error);
+		} finally {
+			processingRef.current = false;
+		}
+	}, [
+		currentCode,
+		requestAIReview,
+		settings.codeReview.mode,
+		exerciseData?.statement,
+		exampleCode,
+		stepDescription,
+	]);
+
+	const handleSendMessage = useCallback(() => {
+		if (!chatInput.trim()) return;
+		console.log("Send message:", chatInput);
+		setChatInput("");
+	}, [chatInput]);
+
+	// Auto-request review
+	useEffect(() => {
+		const shouldRequest =
+			shouldRequestReviewNow &&
+			currentCode &&
+			currentCode.trim().length > 0 &&
+			currentCode !== lastReviewedCode &&
+			!isProcessingAIReview &&
+			!processingRef.current;
+
+		if (shouldRequest) {
+			setLastReviewedCode(currentCode);
+			handleRequestReview();
+		}
+	}, [
+		currentCode,
+		shouldRequestReviewNow,
+		lastReviewedCode,
+		isProcessingAIReview,
+		handleRequestReview,
+	]);
 
 	return (
-		<Sheet>
+		<Sheet open={isSheetOpen} onOpenChange={handleSheetOpenChange}>
 			<SheetTrigger asChild className="cursor-pointer">
 				<div className="inline-block relative">
 					<AsyncButton
-						onClick={handleSheetOpen}
 						icon={<BotMessageSquare />}
-						isLoading={isReviewing}
+						isLoading={isProcessingAIReview}
 					>
-						{isReviewing ? "Reviewing..." : "Review"}
+						{isProcessingAIReview ? "Reviewing..." : "Review"}
 					</AsyncButton>
-
 					{shouldShowBadge && (
 						<Badge
 							className="-top-2 -left-2 absolute flex justify-center items-center p-0 rounded-lg size-4 animate-in duration-300 fade-in-0 zoom-in-95"
@@ -60,37 +185,57 @@ const CodeReviewer = ({
 					)}
 				</div>
 			</SheetTrigger>
-
-			<SheetContent className="w-full sm:min-w-[625px]">
+			<SheetContent className="flex flex-col w-full sm:min-w-[625px]">
 				<SheetHeader>
 					<SheetTitle>Code Review</SheetTitle>
 					<SheetDescription>
-						{isReviewing
+						{isProcessingAIReview
 							? "AI Tutor is reviewing your code..."
 							: "View your code review results and feedback."}
 					</SheetDescription>
 				</SheetHeader>
-
-				<div className="flex-1 gap-6 grid auto-rows-min px-4 py-4">
-					{isReviewing ? (
-						<div className="flex justify-center items-center py-8">
-							<div className="flex items-center gap-2 text-muted-foreground">
-								<Loader2 className="size-4 animate-spin" />
-								<span>Analyzing your code...</span>
-							</div>
-						</div>
-					) : reviewMessages && reviewMessages.length > 0 ? (
-						<div className="space-y-4">amongus</div>
-					) : (
-						<EmptyData
-							icon={(className) => (
-								<MessageCircleDashed className={className} />
-							)}
-							message="No reviews available. Start coding to receive feedback."
+				<div className="flex flex-col flex-1 overflow-hidden">
+					<div className="flex-1 px-4 py-4 overflow-y-auto">
+						<MessageList
+							messages={reviewMessages}
+							isSending={isProcessingAIReview}
 						/>
-					)}
+					</div>
+					{/* Chat Input */}
+					<div className="space-y-3 p-4">
+						<div className="flex gap-2">
+							<AsyncButton
+								onClick={handleRequestReview}
+								isLoading={isProcessingAIReview}
+								disabled={!currentCode.trim() || isProcessingAIReview}
+								icon={<SearchCode />}
+							>
+								Review now
+							</AsyncButton>
+							<Input
+								placeholder="Ask AI something..."
+								value={chatInput}
+								onChange={(e) => setChatInput(e.target.value)}
+								disabled={true}
+								className="flex-1"
+								onKeyDown={(e) => {
+									if (e.key === "Enter" && !e.shiftKey) {
+										e.preventDefault();
+										handleSendMessage();
+									}
+								}}
+							/>
+							<Button
+								onClick={handleSendMessage}
+								disabled={true}
+								size="icon"
+								variant="outline"
+							>
+								<Send className="size-4" />
+							</Button>
+						</div>
+					</div>
 				</div>
-
 				<SheetFooter className="border-t">
 					<SheetClose asChild>
 						<Button variant="outline">Close</Button>

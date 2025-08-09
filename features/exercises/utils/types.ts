@@ -1,4 +1,4 @@
-import type { EXERCISE_LEVEL, REVIEW_MODE } from "./constants";
+import type { EXERCISE_LEVEL, REVIEW_MODE, STEP_STATUS } from "./constants";
 
 export interface IExercise {
   id: string;
@@ -34,5 +34,17 @@ export interface ICodeEditorSettings {
   codeReview: {
     mode: REVIEW_MODE;
     showInstructions: boolean;
+  };
+}
+
+
+export interface IMessage {
+  feedback: string;
+  stepStatus?: STEP_STATUS.PASSED | STEP_STATUS.NOT_PASSED;
+  metadata: {
+    messageId: string;
+    timestamp: string;
+    sender: "ai" | "user";
+    type: "response" | "question";
   };
 }
