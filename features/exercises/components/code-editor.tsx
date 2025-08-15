@@ -2,7 +2,7 @@
 
 import type { editor } from "monaco-editor";
 import dynamic from "next/dynamic";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader } from "@/components/common/loaders";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -14,12 +14,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useSettings } from "../contexts/code-editor-settings-context";
-import { REVIEW_MODE, SUPPORTED_CODE_LANGUAGES } from "../utils/constants";
-import type { IExercise, IStep } from "../utils/types";
+import { SUPPORTED_CODE_LANGUAGES } from "../utils/constants";
+import type { IExercise } from "../utils/types";
 import CodeEditorSettings from "./code-editor-settings";
 import CodeReviewer from "./code-reviewer";
-import StepInfo, { type IStepWithStatus } from "./step-info";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 	ssr: false,
@@ -28,23 +26,18 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 type MonacoEditor = editor.IStandaloneCodeEditor;
 
 interface ICodeEditorProps {
-	stepsData: IStep[];
 	exerciseData?: IExercise;
 }
 
-const CodeEditor = ({ stepsData, exerciseData }: ICodeEditorProps) => {
+const CodeEditor = ({ exerciseData }: ICodeEditorProps) => {
 	const [language, setLanguage] = useState<string>(
 		SUPPORTED_CODE_LANGUAGES[0].id,
 	);
 	const [code, setCode] = useState<string>(
 		SUPPORTED_CODE_LANGUAGES[0].code_snippet || "",
 	);
-	const [currentStep, setCurrentStep] = useState<number>(0);
 	const [shouldRequestReviewNow, setShouldRequestReviewNow] =
 		useState<boolean>(false);
-	const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
-
-	const { settings } = useSettings();
 
 	const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -81,28 +74,6 @@ const CodeEditor = ({ stepsData, exerciseData }: ICodeEditorProps) => {
 		}
 	}, [shouldRequestReviewNow]);
 
-	const exampleCode = useMemo(() => {
-		if (settings.codeReview.mode === REVIEW_MODE.STEP_CODE) {
-			return stepsData[currentStep]?.code || "";
-		} else {
-			return exerciseData?.example_code || "";
-		}
-	}, [settings.codeReview.mode, stepsData, currentStep, exerciseData]);
-
-	const stepDescription = useMemo(() => {
-		if (settings.codeReview.mode === REVIEW_MODE.STEP_CODE) {
-			return stepsData[currentStep]?.description || "";
-		}
-		return "";
-	}, [settings.codeReview.mode, stepsData, currentStep]);
-
-	const stepsWithStatus = useMemo((): IStepWithStatus[] => {
-		return stepsData.map((step, index) => ({
-			...step,
-			isCompleted: completedSteps.has(index),
-		}));
-	}, [stepsData, completedSteps]);
-
 	const handleChangeCodeLanguage = (id: string) => {
 		const selectedLanguage = SUPPORTED_CODE_LANGUAGES.find(
 			(lang) => lang.id === id,
@@ -110,15 +81,6 @@ const CodeEditor = ({ stepsData, exerciseData }: ICodeEditorProps) => {
 		if (selectedLanguage) {
 			setLanguage(selectedLanguage.id);
 			setCode(selectedLanguage.code_snippet || "");
-		}
-	};
-
-	const handleStepCompleted = (stepIndex: number) => {
-		setCompletedSteps((prev) => new Set(prev).add(stepIndex));
-
-		// Auto advance to next step if available
-		if (stepIndex === currentStep && stepIndex < stepsData.length - 1) {
-			setCurrentStep(stepIndex + 1);
 		}
 	};
 
@@ -159,22 +121,9 @@ const CodeEditor = ({ stepsData, exerciseData }: ICodeEditorProps) => {
 					<CodeReviewer
 						currentCode={code}
 						exerciseData={exerciseData}
-						exampleCode={exampleCode}
-						stepDescription={stepDescription}
 						shouldRequestReviewNow={shouldRequestReviewNow}
-						currentStep={currentStep}
-						onStepCompleted={handleStepCompleted}
 					/>
 				</div>
-
-				{settings.codeReview.mode === REVIEW_MODE.STEP_CODE &&
-					settings.codeReview.showInstructions && (
-						<StepInfo
-							stepDatas={stepsWithStatus}
-							currentStep={currentStep}
-							onStepClick={setCurrentStep}
-						/>
-					)}
 			</CardHeader>
 
 			<CardContent className="flex flex-col flex-1 gap-2 p-0 min-h-0">

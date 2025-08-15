@@ -1,4 +1,4 @@
-import { History, LetterText } from "lucide-react";
+import { Footprints, History, LetterText } from "lucide-react";
 import { MarkdownKatexRenderer } from "@/components/common/markdown-katex-renderer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Scroller } from "@/components/ui/scroller";
@@ -17,6 +17,10 @@ const ExerciseInfo = ({ exerciseData }: IExerciseInfoProps) => {
 						<TabsTrigger value="description">
 							<LetterText />
 							Description
+						</TabsTrigger>
+						<TabsTrigger value="instructions">
+							<Footprints />
+							Instructions
 						</TabsTrigger>
 						<TabsTrigger value="submissions">
 							<History />

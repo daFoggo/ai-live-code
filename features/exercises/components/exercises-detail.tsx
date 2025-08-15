@@ -63,7 +63,7 @@ export const ExerciseDetail = () => {
 
 								<ResizablePanel defaultSize={65} minSize={35} maxSize={75}>
 									<div className="flex flex-col h-full">
-										<CodeEditor stepsData={exerciseDetail.steps || []} exerciseData={exerciseDetail} />
+										<CodeEditor exerciseData={exerciseDetail} />
 									</div>
 								</ResizablePanel>
 							</ResizablePanelGroup>
@@ -99,7 +99,7 @@ export const ExerciseDetail = () => {
 									className="mt-0 h-[calc(100%-4rem)]"
 								>
 									<div className="flex flex-col h-full">
-										<CodeEditor stepsData={exerciseDetail.steps || []} exerciseData={exerciseDetail} />
+										<CodeEditor exerciseData={exerciseDetail} />
 									</div>
 								</TabsContent>
 							</Tabs>

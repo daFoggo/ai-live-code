@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { LibraryBig } from "lucide-react";
 import type { INavItem } from "@/lib/types/navigation";
 import AppLogo from "../common/app-logo";
@@ -10,6 +11,7 @@ import {
 } from "../common/reuse-header";
 import { ThemeSwitcher } from "../common/theme-switcher";
 import { Separator } from "../ui/separator";
+import { Skeleton } from "../ui/skeleton";
 
 const HeaderLeftSection = () => {
 	const navbarItems: INavItem[] = [
@@ -35,30 +37,85 @@ const HeaderLeftSection = () => {
 	);
 };
 
-const HeaderRightSection = () => {
+const HeaderRightSection = ({
+	isSignedIn,
+	isLoaded,
+	userId,
+	sessionId,
+}: {
+	isSignedIn: boolean | undefined;
+	isLoaded: boolean | undefined;
+	userId: string | null | undefined;
+	sessionId: string | null | undefined;
+}) => {
 	return (
-		<AnimatedButton variant="ghost" delay={0.4} asChild>
-			<ThemeSwitcher />
-		</AnimatedButton>
+		<div className="flex items-center gap-2 md:gap-4">
+			<AnimatedButton variant="ghost" delay={0.4} asChild>
+				<ThemeSwitcher />
+			</AnimatedButton>
+
+			{!isLoaded ? null : !isSignedIn ? (
+				<SignInButton />
+			) : userId && sessionId ? (
+				<UserButton />
+			) : (
+				<Skeleton className="rounded-full size-12" />
+			)}
+		</div>
 	);
 };
 
-const HeaderMobileMenuContent = () => {
+const HeaderMobileMenuContent = ({
+	isSignedIn,
+	isLoaded,
+	userId,
+	sessionId,
+}: {
+	isSignedIn: boolean | undefined;
+	isLoaded: boolean | undefined;
+	userId: string | null | undefined;
+	sessionId: string | null | undefined;
+}) => {
 	return (
 		<div className="flex flex-col gap-4">
 			<AnimatedButton variant="ghost" delay={0.4} asChild>
 				<ThemeSwitcher showText={true} />
 			</AnimatedButton>
+
+			<div className="mt-2 pt-2 border-t border-border/30">
+				{!isLoaded ? null : !isSignedIn ? (
+					<SignInButton />
+				) : userId && sessionId ? (
+					<UserButton />
+				) : (
+					<Skeleton className="rounded-full size-12" />
+				)}
+			</div>
 		</div>
 	);
 };
 
 export const ExerciseHeader = () => {
+	const { isSignedIn, userId, sessionId, isLoaded } = useAuth();
 	return (
 		<ReusableHeader
 			leftSection={<HeaderLeftSection />}
-			rightSection={<HeaderRightSection />}
-			mobileMenuContent={<HeaderMobileMenuContent />}
+			rightSection={
+				<HeaderRightSection
+					isSignedIn={isSignedIn}
+					isLoaded={isLoaded}
+					userId={userId}
+					sessionId={sessionId}
+				/>
+			}
+			mobileMenuContent={
+				<HeaderMobileMenuContent
+					isSignedIn={isSignedIn}
+					isLoaded={isLoaded}
+					userId={userId}
+					sessionId={sessionId}
+				/>
+			}
 			enableScrollEffect={true}
 			enableMobileMenu={true}
 			stickyHeader={true}

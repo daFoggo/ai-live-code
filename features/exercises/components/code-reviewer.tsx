@@ -18,28 +18,19 @@ import {
 } from "@/components/ui/sheet";
 import { useSettings } from "../contexts/code-editor-settings-context";
 import { useAIReviewSWR } from "../hooks/use-ai-review-swr";
-import { REVIEW_MODE, STEP_STATUS } from "../utils/constants";
 import type { IExercise, IMessage } from "../utils/types";
 import MessageList from "./message-list";
 
 interface ICodeReviewerProps {
 	currentCode: string;
-	exampleCode: string;
-	stepDescription: string;
 	shouldRequestReviewNow: boolean;
 	exerciseData?: IExercise;
-	currentStep: number;
-	onStepCompleted: (stepIndex: number) => void;
 }
 
 const CodeReviewer = ({
 	currentCode,
-	exampleCode,
-	stepDescription,
 	shouldRequestReviewNow,
 	exerciseData,
-	currentStep,
-	onStepCompleted,
 }: ICodeReviewerProps) => {
 	const [hasNewReview, setHasNewReview] = useState(false);
 	const [hasSeenLatestReview, setHasSeenLatestReview] = useState(false);
@@ -53,13 +44,6 @@ const CodeReviewer = ({
 	const { aiReviewData, requestAIReview, isProcessingAIReview } =
 		useAIReviewSWR();
 	const { settings } = useSettings();
-
-	const stableOnStepCompleted = useCallback(
-		(stepIndex: number) => {
-			onStepCompleted(stepIndex);
-		},
-		[onStepCompleted],
-	);
 
 	useEffect(() => {
 		if (
@@ -78,21 +62,8 @@ const CodeReviewer = ({
 			});
 			setHasNewReview(true);
 			setHasSeenLatestReview(false);
-			if (
-				aiReviewData.stepStatus === STEP_STATUS.PASSED &&
-				settings.codeReview.mode === REVIEW_MODE.STEP_CODE
-			) {
-				setTimeout(() => {
-					stableOnStepCompleted(currentStep);
-				}, 0);
-			}
 		}
-	}, [
-		aiReviewData,
-		currentStep,
-		stableOnStepCompleted,
-		settings.codeReview.mode,
-	]);
+	}, [aiReviewData]);
 
 	const shouldShowBadge = hasNewReview && !hasSeenLatestReview;
 
@@ -113,12 +84,8 @@ const CodeReviewer = ({
 				inputs: {
 					mode: settings.codeReview.mode,
 					purpose: exerciseData?.statement || "",
-					example_code: exampleCode,
+					example_code: "",
 					user_code: currentCode,
-					step_description:
-						settings.codeReview.mode === REVIEW_MODE.STEP_CODE
-							? stepDescription
-							: undefined,
 				},
 				response_mode: "blocking",
 				user: "abc-123",
@@ -133,8 +100,6 @@ const CodeReviewer = ({
 		requestAIReview,
 		settings.codeReview.mode,
 		exerciseData?.statement,
-		exampleCode,
-		stepDescription,
 	]);
 
 	const handleSendMessage = useCallback(() => {
