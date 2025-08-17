@@ -71,7 +71,7 @@ export const ReusableHeader = ({
 		stickyHeader && "sticky top-0",
 		backdropBlur && "backdrop-blur-lg",
 		enableScrollEffect
-			? "bg-background/90 border-border/20 border-b shadow-sm"
+			? "bg-background/90 border-border/30 border-b shadow-sm"
 			: "bg-transparent",
 		className,
 	);

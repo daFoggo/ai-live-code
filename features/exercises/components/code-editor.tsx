@@ -90,40 +90,36 @@ const CodeEditor = ({ exerciseData }: ICodeEditorProps) => {
 	};
 
 	return (
-		<Card className="flex flex-col mx-3 mb-2 sm:mb-0 h-full">
-			<CardHeader className="gap-4">
-				<div className="flex justify-between items-center gap-2">
-					{/*Tool bar*/}
-					<div className="flex items-center gap-2">
-						<Select
-							value={language}
-							onValueChange={handleChangeCodeLanguage}
-							defaultValue="python"
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select language" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									<SelectLabel>Supported languages</SelectLabel>
-									{SUPPORTED_CODE_LANGUAGES.map((lang) => (
-										<SelectItem key={lang.id} value={lang.id}>
-											{lang.name}
-										</SelectItem>
-									))}
-								</SelectGroup>
-							</SelectContent>
-						</Select>
-						<CodeEditorSettings />
-					</div>
-
-					{/* Chatbot */}
-					<CodeReviewer
-						currentCode={code}
-						exerciseData={exerciseData}
-						shouldRequestReviewNow={shouldRequestReviewNow}
-					/>
+		<Card className="flex flex-col mx-3 sm:my-0 mt-2 sm:mr-0 mb-3 sm:ml-6 h-full">
+			<CardHeader className="flex justify-between items-center gap-4 w-full">
+				<div className="flex items-center gap-2">
+					<Select
+						value={language}
+						onValueChange={handleChangeCodeLanguage}
+						defaultValue="python"
+					>
+						<SelectTrigger>
+							<SelectValue placeholder="Select language" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel>Supported languages</SelectLabel>
+								{SUPPORTED_CODE_LANGUAGES.map((lang) => (
+									<SelectItem key={lang.id} value={lang.id}>
+										{lang.name}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<CodeEditorSettings />
 				</div>
+
+				<CodeReviewer
+					currentCode={code}
+					exerciseData={exerciseData}
+					shouldRequestReviewNow={shouldRequestReviewNow}
+				/>
 			</CardHeader>
 
 			<CardContent className="flex flex-col flex-1 gap-2 p-0 min-h-0">

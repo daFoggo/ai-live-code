@@ -129,11 +129,12 @@ export const ExerciseDetailHeader = () => {
 					sessionId={sessionId}
 				/>
 			}
-			enableScrollEffect={true}
+			enableScrollEffect={false}
 			enableMobileMenu={true}
 			stickyHeader={false}
 			backdropBlur={false}
 			useContainer={false}
+			className="border-b border-border/30"
 		/>
 	);
 };

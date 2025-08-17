@@ -41,6 +41,7 @@ import { Switch } from "@/components/ui/switch";
 import {
     Tooltip,
     TooltipContent,
+    TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSettings } from "../contexts/code-editor-settings-context";
@@ -75,7 +76,7 @@ const CodeEditorSettings = () => {
                     <Select
                         value={settings.codeReview.mode.toString()}
                         onValueChange={(value) =>
-                            updateSetting("codeReview", "mode", parseInt(value))
+                            updateSetting("codeReview", "mode", Number.parseInt(value))
                         }
                         disabled={isLoading}
                     >
@@ -194,16 +195,18 @@ const CodeEditorSettings = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                        <Button variant="secondary" size="icon">
-                            <SlidersHorizontal className="size-4" />
-                        </Button>
-                    </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Open code editor settings</TooltipContent>
-            </Tooltip>
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <DialogTrigger asChild>
+                            <Button variant="secondary" size="icon">
+                                <SlidersHorizontal className="size-4" />
+                            </Button>
+                        </DialogTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>Open code editor settings</TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
             <DialogContent className="p-0 md:max-w-[800px] lg:max-w-[900px] max-h-[90vh] md:max-h-[500px] overflow-hidden">
                 <DialogTitle className="sr-only">Code Editor Settings</DialogTitle>
                 <DialogDescription className="sr-only">
@@ -212,10 +215,10 @@ const CodeEditorSettings = () => {
 
                 {/* Desktop Layout */}
                 <div className="hidden md:block">
-                    <SidebarProvider className="items-start">
-                        <Sidebar collapsible="none" className="flex">
-                            <SidebarContent>
-                                <SidebarGroup>
+                    <SidebarProvider className="h-full">
+                        <Sidebar collapsible="none" className="flex h-full">
+                            <SidebarContent className="h-full">
+                                <SidebarGroup className="h-full">
                                     <SidebarGroupContent>
                                         <SidebarMenu>
                                             {SETTINGS_CATEGORIES.map((item) => {

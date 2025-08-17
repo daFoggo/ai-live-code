@@ -121,7 +121,7 @@ export const ExerciseHeader = () => {
 			stickyHeader={true}
 			backdropBlur={true}
 			useContainer={false}
-			className="border-b border-border/20"
+			className="border-b border-border/30"
 		/>
 	);
 };

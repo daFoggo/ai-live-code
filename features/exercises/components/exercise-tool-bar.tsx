@@ -1,5 +1,6 @@
 "use client";
 import { BugPlay, NotebookPen, Play, SendHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { AsyncButton } from "@/components/common/async-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const ExerciseToolBar = () => {
+	const router = useRouter();
 	return (
 		<div className="flex items-center gap-2">
 			<div className="flex items-center gap-0.5">
@@ -39,6 +41,7 @@ const ExerciseToolBar = () => {
 							className="rounded-l-none"
 							icon={<SendHorizontal />}
 							iconPosition="right"
+							onClick={() => router.push(`/submission/đâs`)}
 						>
 							Submit
 						</AsyncButton>

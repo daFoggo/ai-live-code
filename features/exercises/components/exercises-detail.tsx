@@ -43,7 +43,7 @@ export const ExerciseDetail = () => {
 				<main className="isolate flex flex-col flex-1 w-full overflow-hidden">
 					<div className="isolate relative flex flex-1 w-full overflow-hidden">
 						{/* Desktop Layout */}
-						<div className="hidden md:block p-3 sm:p-6 size-full">
+						<div className="hidden md:block p-6 size-full">
 							<ResizablePanelGroup
 								direction="horizontal"
 								className="isolate h-full"
@@ -86,7 +86,7 @@ export const ExerciseDetail = () => {
 								{/* Problem */}
 								<TabsContent
 									value="problem"
-									className="mt-0 h-[calc(100%-4rem)]"
+									className="h-[calc(100%-4rem)]"
 								>
 									<div className="flex flex-col h-full">
 										<ExerciseInfo exerciseData={exerciseDetail} />
@@ -96,7 +96,7 @@ export const ExerciseDetail = () => {
 								{/* Editor */}
 								<TabsContent
 									value="editor"
-									className="mt-0 h-[calc(100%-4rem)]"
+									className="h-[calc(100%-4rem)]"
 								>
 									<div className="flex flex-col h-full">
 										<CodeEditor exerciseData={exerciseDetail} />
