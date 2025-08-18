@@ -85,7 +85,7 @@ export default ExerciseInfo;
 const ExerciseInstructions = ({ steps }: { steps: IStep[] }) => {
 	const convertedSteps = steps.map((step) => {
 		return {
-			id: step.step_id,
+			id: step.step_number.toString(),
 			title: step.title,
 			content: step.explanation,
 		};
