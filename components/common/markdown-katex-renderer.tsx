@@ -55,9 +55,7 @@ export function MarkdownKatexRenderer({
 
         // Paragraphs
         p: ({ children }) => (
-            <p className="first:mt-0 mb-4 leading-7">
-                {children}
-            </p>
+            <p className="first:mt-0 mb-4 leading-7">{children}</p>
         ),
 
         // Links
@@ -74,14 +72,10 @@ export function MarkdownKatexRenderer({
 
         // Lists
         ul: ({ children }) => (
-            <ul className="space-y-2 mb-4 list-disc list-inside">
-                {children}
-            </ul>
+            <ul className="space-y-2 mb-4 list-disc list-inside">{children}</ul>
         ),
         ol: ({ children }) => (
-            <ol className="space-y-2 mb-4 list-decimal list-inside">
-                {children}
-            </ol>
+            <ol className="space-y-2 mb-4 list-decimal list-inside">{children}</ol>
         ),
         li: ({ children }) => <li className="leading-7">{children}</li>,
 
@@ -148,9 +142,7 @@ export function MarkdownKatexRenderer({
             </th>
         ),
         td: ({ children }) => (
-            <td className="px-4 py-2 border border-border">
-                {children}
-            </td>
+            <td className="px-4 py-2 border border-border">{children}</td>
         ),
 
         // Horizontal rule
@@ -158,7 +150,10 @@ export function MarkdownKatexRenderer({
 
         // Images
         img: ({ src, alt }) => {
-            const imageSrc = typeof src === 'string' ? src : "/placeholder.svg?height=400&width=600&text=Image";
+            const imageSrc =
+                typeof src === "string"
+                    ? src
+                    : "/placeholder.svg?height=400&width=600&text=Image";
             return (
                 <div className="my-6">
                     <Image
@@ -178,9 +173,7 @@ export function MarkdownKatexRenderer({
         em: ({ children }) => <em className="italic">{children}</em>,
 
         // Strikethrough (from remark-gfm)
-        del: ({ children }) => (
-            <del className="line-through /70">{children}</del>
-        ),
+        del: ({ children }) => <del className="line-through /70">{children}</del>,
 
         // Task lists (from remark-gfm)
         input: ({ type, checked, ...props }) => {
@@ -199,6 +192,11 @@ export function MarkdownKatexRenderer({
         },
     };
 
+    const processedContent = content
+        .replace(/\\n/g, "\n")
+        .replace(/\n/g, "  \n") // Thêm 2 spaces trước mỗi \n để markdown hiểu là line break
+        .replace(/ {2}\n {2}\n/g, "\n\n");
+
     return (
         <div
             className={cn(
@@ -211,7 +209,7 @@ export function MarkdownKatexRenderer({
                 rehypePlugins={[rehypeKatex]}
                 components={components}
             >
-                {content}
+                {processedContent}
             </ReactMarkdown>
         </div>
     );
