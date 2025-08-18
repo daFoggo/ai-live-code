@@ -2,14 +2,26 @@
 
 import { ChevronRight, Code, ExternalLink, FileText, Play } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import YouTube from "react-youtube";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SAMPLE_COURSES } from "@/features/courses/utils/data";
+import type { IChapter } from "@/features/courses/utils/types";
 import type { ISession } from "../utils/types";
 
 export const SessionDetail = () => {
-	const session: ISession = SAMPLE_COURSES.chapters[0].sessions[1];
+	const { chapterId, sessionId } = useParams<{
+		chapterId: string;
+		sessionId: string;
+	}>();
+	const chapter: IChapter =
+		SAMPLE_COURSES.chapters.find((chapter) => chapter.id === chapterId) ||
+		({} as IChapter);
+
+	const session: ISession =
+		chapter.sessions.find((session) => session.id === sessionId) ||
+		({} as ISession);
 
 	const getYouTubeVideoId = (url: string) => {
 		const match = url.match(
@@ -56,7 +68,7 @@ export const SessionDetail = () => {
 							href="/course/introduction-to-programming-with-python"
 							className="hover:text-foreground whitespace-nowrap transition-colors"
 						>
-							Python Introduction
+							Introduction to Programming with Python
 						</Link>
 						<ChevronRight className="flex-shrink-0 size-3 sm:size-4" />
 						<span className="font-medium text-foreground truncate">
@@ -71,7 +83,7 @@ export const SessionDetail = () => {
 								{session.name}
 							</h1>
 							<p className="mt-1 text-muted-foreground text-xs sm:text-sm">
-								Chapter 1: Getting Started
+								{chapter.name}
 							</p>
 						</div>
 

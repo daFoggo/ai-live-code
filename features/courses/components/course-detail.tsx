@@ -126,7 +126,7 @@ export const CourseDetail = () => {
 													(session: ISession, sessionIndex: number) => (
 														<Link
 															key={session.id}
-															href={`/course/${SAMPLE_COURSES.id}/session/${session.id}`}
+															href={`/course/${SAMPLE_COURSES.id}/chapter/${chapter.id}/session/${session.id}`}
 															className="block"
 														>
 															<div className="group flex items-center gap-4 hover:bg-muted/50 p-4 rounded-lg transition-colors">
