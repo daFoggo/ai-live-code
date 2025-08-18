@@ -15,7 +15,7 @@ import { Skeleton } from "../ui/skeleton";
 
 const HeaderLeftSection = () => {
 	const navbarItems: INavItem[] = [
-		{ title: "Problem list", url: "/exercises", icon: LibraryBig },
+		{ title: "Course List", url: "/courses", icon: LibraryBig },
 	];
 
 	return (
@@ -95,7 +95,7 @@ const HeaderMobileMenuContent = ({
 	);
 };
 
-export const ExerciseHeader = () => {
+export const CourseHeader = () => {
 	const { isSignedIn, userId, sessionId, isLoaded } = useAuth();
 	return (
 		<ReusableHeader

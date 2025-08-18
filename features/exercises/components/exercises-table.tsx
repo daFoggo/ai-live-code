@@ -24,12 +24,25 @@ const ExerciseTable = () => {
 	const { exercises, isLoadingExercises, exercisesError } =
 		useExercisesManagementSWR(params);
 
+	const filteredExercises = useMemo(() => {
+		if (!exercises) return [];
+
+		const easyExercises = exercises
+			.filter((ex) => ex.difficulty === 1)
+			.slice(0, 2);
+		const mediumExercises = exercises
+			.filter((ex) => ex.difficulty === 2)
+			.slice(0, 3);
+
+		return [...easyExercises, ...mediumExercises];
+	}, [exercises]);
+
 	function handleNavigateExercise(exercise: IExercise) {
 		router.push(`/exercise/${exercise.problem_id}`);
 	}
 
 	const { table } = useDataTable({
-		data: exercises || [],
+		data: filteredExercises|| [],
 		columns: memoizedColumns,
 		pageCount: 1,
 		initialState: {

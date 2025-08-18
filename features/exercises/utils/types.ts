@@ -15,6 +15,8 @@ export interface IExercise {
 
   time_limit_ms: number;
   memory_limit_mb: number;
+
+  isDone?: boolean;
 }
 
 export interface ITestCase {

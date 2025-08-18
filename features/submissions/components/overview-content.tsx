@@ -91,14 +91,14 @@ export const OverviewContent = () => {
 						<Badge
 							className={cn(
 								"font-semibold text-lg sm:text-xl cursor-help",
-								getSubmissionStatusConfig(SUBMISSION_STATUSES.ce.code)
+								getSubmissionStatusConfig(SUBMISSION_STATUSES.ac.code)
 									.badgeColor,
 							)}
 						>
-							{SUBMISSION_STATUSES.ce.title}
+							{SUBMISSION_STATUSES.ac.title}
 						</Badge>
 					</TooltipTrigger>
-					<TooltipContent>{SUBMISSION_STATUSES.ce.description}</TooltipContent>
+					<TooltipContent>{SUBMISSION_STATUSES.ac.description}</TooltipContent>
 				</Tooltip>
 				<Separator orientation="vertical" className="min-h-8" />
 				<p className="text-muted-foreground text-xs sm:text-base">
