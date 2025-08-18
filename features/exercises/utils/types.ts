@@ -1,14 +1,20 @@
-import type { EXERCISE_LEVEL, REVIEW_MODE, STEP_STATUS } from "./constants";
+import type { REVIEW_MODE, STEP_STATUS } from "./constants";
 
 export interface IExercise {
-  id: string;
+  problem_id: string;
   name: string;
-  statement: string;
-  level: EXERCISE_LEVEL;
-  function_signature?: string;
-  testcases: ITestCase[];
+  description: string;
+  difficulty: number;
+  code_template?: string;
+  guidelines?: string;
+  solution?: string;
+  public_test_path?: string;
+  hidden_test_path?: string;
   steps?: IStep[];
-  example_code?: string;
+  clos?: string[];
+
+  time_limit_ms: number;
+  memory_limit_mb: number;
 }
 
 export interface ITestCase {
@@ -19,9 +25,11 @@ export interface ITestCase {
 }
 
 export interface IStep {
+  step_id: string;
+  step_number: number;
   title: string;
-  description: string;
-  code: string;
+  explanation: string;
+  solution: string;
 }
 
 export interface ICodeLanguage {
@@ -36,7 +44,6 @@ export interface ICodeEditorSettings {
     showInstructions: boolean;
   };
 }
-
 
 export interface IMessage {
   feedback: string;

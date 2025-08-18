@@ -12,17 +12,23 @@ import { SubmissionInfo } from "./submission-info";
 import UserCode from "./user-code";
 
 export const SubmissionDetail = () => {
-	const exerciseId = "hoc-lai-tin-hoc-co-so-2";
+	const storedExercise = JSON.parse(
+		localStorage.getItem("storedExercise") || "null",
+	);
+	const { id, name } = storedExercise || {
+		exerciseName: "Unknown Exercise",
+		exerciseId: "unknown-id",
+	};
 
 	const CustomTitle = () => {
 		return (
 			<p className="font-semibold sm:font-bold text-lg sm:text-2xl">
 				Your submission for{" "}
 				<Link
-					href={`/exercise/${exerciseId}`}
+					href={`/exercise/${id}`}
 					className="text-primary hover:underline"
 				>
-					{exerciseId}
+					{name}
 				</Link>
 			</p>
 		);

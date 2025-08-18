@@ -2,6 +2,7 @@
 
 import { BadgeQuestionMark, FileCode2 } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useRef } from "react";
 import ErrorAlert from "@/components/common/error-alert";
 import { PageLoading } from "@/components/common/page-loading";
 import {
@@ -12,7 +13,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeEditorSettingsProvider } from "../contexts/code-editor-settings-context";
 import { useExerciseDetailSWR } from "../hooks/use-exercises-detail-swr";
-import CodeEditor from "./code-editor";
+import CodeEditor, { type ICodeEditorRef } from "./code-editor";
 import { ExerciseDetailHeader } from "./exercise-detail-header";
 import ExerciseInfo from "./exercise-info";
 
@@ -20,6 +21,12 @@ export const ExerciseDetail = () => {
 	const { id } = useParams<{ id: string }>();
 	const { exerciseDetail, isLoadingExerciseDetail, exerciseDetailError } =
 		useExerciseDetailSWR(id);
+
+	const codeEditorRef = useRef<ICodeEditorRef>(null);
+
+	const getCurrentCode = () => {
+		return codeEditorRef.current?.getCurrentCode() || "";
+	};
 
 	if (isLoadingExerciseDetail) {
 		return (
@@ -39,7 +46,10 @@ export const ExerciseDetail = () => {
 	return (
 		<CodeEditorSettingsProvider>
 			<div className="isolate relative flex flex-col h-svh overflow-hidden">
-				<ExerciseDetailHeader />
+				<ExerciseDetailHeader
+					getCurrentCode={getCurrentCode}
+					exerciseData={exerciseDetail}
+				/>
 				<main className="isolate flex flex-col flex-1 w-full overflow-hidden">
 					<div className="isolate relative flex flex-1 w-full overflow-hidden">
 						{/* Desktop Layout */}
@@ -63,7 +73,10 @@ export const ExerciseDetail = () => {
 
 								<ResizablePanel defaultSize={65} minSize={35} maxSize={75}>
 									<div className="flex flex-col h-full">
-										<CodeEditor exerciseData={exerciseDetail} />
+										<CodeEditor
+											ref={codeEditorRef}
+											exerciseData={exerciseDetail}
+										/>
 									</div>
 								</ResizablePanel>
 							</ResizablePanelGroup>
@@ -84,22 +97,19 @@ export const ExerciseDetail = () => {
 								</TabsList>
 
 								{/* Problem */}
-								<TabsContent
-									value="problem"
-									className="h-[calc(100%-4rem)]"
-								>
+								<TabsContent value="problem" className="h-[calc(100%-4rem)]">
 									<div className="flex flex-col h-full">
 										<ExerciseInfo exerciseData={exerciseDetail} />
 									</div>
 								</TabsContent>
 
 								{/* Editor */}
-								<TabsContent
-									value="editor"
-									className="h-[calc(100%-4rem)]"
-								>
+								<TabsContent value="editor" className="h-[calc(100%-4rem)]">
 									<div className="flex flex-col h-full">
-										<CodeEditor exerciseData={exerciseDetail} />
+										<CodeEditor
+											ref={codeEditorRef}
+											exerciseData={exerciseDetail}
+										/>
 									</div>
 								</TabsContent>
 							</Tabs>

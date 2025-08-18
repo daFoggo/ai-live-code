@@ -12,19 +12,27 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { generateId } from "@/lib/utils/id";
 import { cn } from "@/lib/utils/tailwind";
-import { SAMPLE_STUDENT_CODE_EVALUATION } from "../../utils/data";
 import {
 	getFlexibleCriteriaStatusConfig,
 	getHardCriteriaStatusConfig,
 } from "../../utils/functions";
-import type { IEvaluation, IEvidence } from "../../utils/types";
+import type {
+	ICodeEvaluation,
+	IEvaluation,
+	IEvidence,
+} from "../../utils/types";
 import { ComplexityStatistic } from "./complexity-statistic";
 import { CriteriaTooltip } from "./criteria-toolltip";
 import { NumberedCard } from "./numbered-card";
 
-export const DetailSection = () => {
-	const { hardCriteria, flexibleCriteria } = SAMPLE_STUDENT_CODE_EVALUATION;
-
+interface IDetailSectionProps {
+	hardCriteria: ICodeEvaluation["hardCriteria"];
+	flexibleCriteria: ICodeEvaluation["flexibleCriteria"];
+}
+export const DetailSection = ({
+	hardCriteria,
+	flexibleCriteria,
+}: IDetailSectionProps) => {
 	const renderCriteriaItem = (
 		title: string,
 		evaluation: IEvaluation,

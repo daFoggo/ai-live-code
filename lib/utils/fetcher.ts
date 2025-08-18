@@ -238,17 +238,21 @@ export const fetcherWithHeaders = <T = unknown>([url, headers]: [
 ]): Promise<T> => fetcher<T>([url, { headers }]);
 
 // Fetcher with query parameters
-export const fetcherWithParams = <T = unknown>([url, params]: [
-  string,
-  Record<string, string | number | boolean>
-]): Promise<T> => {
+export const fetcherWithParams = <T = unknown>(
+  [url, params, options = {}]: [string, Record<string, unknown>, RequestConfig?]
+): Promise<T> => {
   const searchParams = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    searchParams.append(key, String(value));
-  }
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      searchParams.append(key, String(value));
+    }
+  });
+
   const urlWithParams = `${url}?${searchParams.toString()}`;
-  return fetcher<T>(urlWithParams);
+  return fetcher<T>([urlWithParams, options]);
 };
+
 
 // File upload fetcher
 export const uploadFetcher = <T = unknown>([url, formData]: [

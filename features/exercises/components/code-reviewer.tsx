@@ -83,7 +83,7 @@ const CodeReviewer = ({
 			await requestAIReview({
 				inputs: {
 					mode: settings.codeReview.mode,
-					purpose: exerciseData?.statement || "",
+					purpose: exerciseData?.description || "",
 					example_code: "",
 					user_code: currentCode,
 				},
@@ -99,7 +99,7 @@ const CodeReviewer = ({
 		currentCode,
 		requestAIReview,
 		settings.codeReview.mode,
-		exerciseData?.statement,
+		exerciseData?.description,
 	]);
 
 	const handleSendMessage = useCallback(() => {

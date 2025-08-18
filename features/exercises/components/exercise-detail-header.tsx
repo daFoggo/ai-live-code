@@ -19,7 +19,18 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { IExercise } from "../utils/types";
 import ExerciseToolBar from "./exercise-tool-bar";
+
+interface IHeaderCenterSectionProps {
+	getCurrentCode: () => string;
+	exerciseData: IExercise;
+}
+
+interface IExerciseDetailHeaderProps {
+	getCurrentCode: () => string;
+	exerciseData: IExercise;
+}
 
 const HeaderLeftSection = () => {
 	const { id } = useParams<{ id: string }>();
@@ -37,7 +48,9 @@ const HeaderLeftSection = () => {
 						<SlashIcon />
 					</BreadcrumbSeparator>
 					<BreadcrumbItem>
-						<BreadcrumbPage>{id}</BreadcrumbPage>
+						<BreadcrumbPage className="font-medium text-primary">
+							{id}
+						</BreadcrumbPage>
 					</BreadcrumbItem>
 				</BreadcrumbList>
 			</Breadcrumb>
@@ -45,8 +58,8 @@ const HeaderLeftSection = () => {
 	);
 };
 
-const HeaderCenterSection = () => {
-	return <ExerciseToolBar />;
+const HeaderCenterSection = ({ getCurrentCode, exerciseData }: IHeaderCenterSectionProps) => {
+	return <ExerciseToolBar getCurrentCode={getCurrentCode} exerciseData={exerciseData} />;
 };
 
 const HeaderRightSection = ({
@@ -107,12 +120,21 @@ const HeaderMobileMenuContent = ({
 	);
 };
 
-export const ExerciseDetailHeader = () => {
+export const ExerciseDetailHeader = ({
+	getCurrentCode,
+	exerciseData,
+}: IExerciseDetailHeaderProps) => {
 	const { isSignedIn, userId, sessionId, isLoaded } = useAuth();
+
 	return (
 		<ReusableHeader
 			leftSection={<HeaderLeftSection />}
-			centerSection={<HeaderCenterSection />}
+			centerSection={
+				<HeaderCenterSection
+					getCurrentCode={getCurrentCode}
+					exerciseData={exerciseData}
+				/>
+			}
 			rightSection={
 				<HeaderRightSection
 					isSignedIn={isSignedIn}

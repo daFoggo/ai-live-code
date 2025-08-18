@@ -1,23 +1,31 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ErrorAlert from "@/components/common/error-alert";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/lib/hooks/use-data-table";
 import { useExercisesManagementSWR } from "../hooks/use-exercises-management-swr";
+import type { IGetExerciseListParams } from "../services/exercises-management";
 import type { IExercise } from "../utils/types";
 import { getExercisesColumnConfig } from "./exercsies-column-config";
 
 const ExerciseTable = () => {
 	const router = useRouter();
 	const memoizedColumns = useMemo(() => getExercisesColumnConfig(), []);
+	// biome-ignore lint/correctness/noUnusedVariables: <later>
+	const [params, setParams] = useState<IGetExerciseListParams>({
+		offset: 0,
+		limit: 20,
+		count: 20,
+	});
+
 	const { exercises, isLoadingExercises, exercisesError } =
-		useExercisesManagementSWR();
+		useExercisesManagementSWR(params);
 
 	function handleNavigateExercise(exercise: IExercise) {
-		router.push(`/exercise/${exercise.id}`);
+		router.push(`/exercise/${exercise.problem_id}`);
 	}
 
 	const { table } = useDataTable({
@@ -27,7 +35,7 @@ const ExerciseTable = () => {
 		initialState: {
 			columnPinning: { right: ["actions"] },
 		},
-		getRowId: (originalRow) => originalRow.id,
+		getRowId: (originalRow) => originalRow.problem_id,
 	});
 
 	if (isLoadingExercises) {
@@ -50,10 +58,10 @@ const ExerciseTable = () => {
 		);
 	}
 	return (
-        <DataTable table={table} onRowClick={handleNavigateExercise}>
-            <DataTableToolbar table={table} />
-        </DataTable>
-    );
+		<DataTable table={table} onRowClick={handleNavigateExercise}>
+			<DataTableToolbar table={table} />
+		</DataTable>
+	);
 };
 
 export default ExerciseTable;

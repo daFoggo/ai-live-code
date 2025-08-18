@@ -1,3 +1,4 @@
+"use client"
 import { SubmissionDetail } from "@/features/submissions"
 
 const ExerciseSubmissionPage = () => {

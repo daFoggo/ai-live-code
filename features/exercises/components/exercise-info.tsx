@@ -51,7 +51,7 @@ const ExerciseInfo = ({ exerciseData }: IExerciseInfoProps) => {
 							<p className="mb-2 font-semibold text-primary text-2xl">
 								{exerciseData.name}
 							</p>
-							<MarkdownKatexRenderer content={exerciseData.statement} />
+							<MarkdownKatexRenderer content={exerciseData.description} />
 						</Scroller>
 					</TabsContent>
 
@@ -83,11 +83,11 @@ const ExerciseInfo = ({ exerciseData }: IExerciseInfoProps) => {
 export default ExerciseInfo;
 
 const ExerciseInstructions = ({ steps }: { steps: IStep[] }) => {
-	const convertedSteps = steps.map((step, index) => {
+	const convertedSteps = steps.map((step) => {
 		return {
-			id: `step-${index}`,
+			id: step.step_id,
 			title: step.title,
-			content: step.description,
+			content: step.explanation,
 		};
 	});
 

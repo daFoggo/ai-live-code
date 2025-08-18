@@ -5,6 +5,7 @@ import { Geist, Geist_Mono, Merriweather } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ClerkThemeProvider } from "@/components/providers/clerk-theme-provider";
 import { SWRProvider } from "@/components/providers/swr-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { APP_INFO } from "@/lib/configs/app-info";
 import { ThemeProvider } from "@/lib/contexts/theme-context";
@@ -53,6 +54,7 @@ export default function RootLayout({
 									<TooltipProvider delayDuration={0} skipDelayDuration={100}>
 										{children}
 									</TooltipProvider>
+									<Toaster position="top-right" richColors />
 								</ClerkProvider>
 							</ClerkThemeProvider>
 						</SWRProvider>

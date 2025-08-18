@@ -5,7 +5,6 @@ import { Loader } from "@/components/common/loaders";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { ICodeLanguage } from "@/features/exercises";
-import { SAMPLE_USER_CODE } from "../utils/data";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 	ssr: false,
@@ -14,6 +13,8 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
 // type MonacoEditor = editor.IStandaloneCodeEditor;
 
 const UserCode = () => {
+	const storedUserCode = JSON.parse(localStorage.getItem("storedUserCode") || "null");
+
 	const codeLanguage: ICodeLanguage = {
 		id: "python",
 		name: "Python",
@@ -31,7 +32,7 @@ const UserCode = () => {
 					height="100%"
 					width="100%"
 					language="python"
-					value={SAMPLE_USER_CODE}
+					value={storedUserCode || ""}
 					options={{
 						fontSize: 14,
 						fontLigatures: true,

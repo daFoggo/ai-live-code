@@ -1,21 +1,29 @@
 import { toast } from "sonner";
 import useSWR from "swr";
-import { exercisesManagementServices } from "../services/exercises-management";
-import type { IExercise } from "../utils/types";
+import {
+  exercisesManagementServices,
+  type IGetExerciseListParams,
+  type IGetExercisesListResponse,
+} from "../services/exercises-management";
 
 export const EXERCISES_MANAGEMENT_CACHE_KEYS = {
   EXERCISES: "exercises",
 };
 
-export const useExercisesManagementSWR = () => {
+export const useExercisesManagementSWR = (params: IGetExerciseListParams) => {
+  const cacheKey = [EXERCISES_MANAGEMENT_CACHE_KEYS.EXERCISES, params];
+
   const {
-    data: exercises,
+    data: exercisesResponse,
     error: exercisesError,
     isLoading: isLoadingExercises,
     mutate: mutateExercises,
-  } = useSWR<IExercise[]>(
-    EXERCISES_MANAGEMENT_CACHE_KEYS.EXERCISES,
-    exercisesManagementServices.getExercises,
+  } = useSWR<IGetExercisesListResponse>(
+    cacheKey,
+    async () => {
+      const response = await exercisesManagementServices.getExercises(params);
+      return response;
+    },
     {
       onError: (error) => {
         toast.error("Failed to fetch exercises");
@@ -25,9 +33,12 @@ export const useExercisesManagementSWR = () => {
   );
 
   return {
-    exercises,
+    exercises: exercisesResponse?.data || [],
     exercisesError,
     isLoadingExercises,
     mutateExercises,
+    offset: exercisesResponse?.offset,
+    limit: exercisesResponse?.limit,
+    count: exercisesResponse?.count,
   };
 };
