@@ -1,0 +1,47 @@
+[
+  {
+    "problem_id": "two-sum-001",
+    "topic": "string",
+    "sub_topic": "string",
+    "name": "Two Sum",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+    "difficulty": 1,
+    "code_template": "function twoSum(nums: number[], target: number): number[] {\n    // Your code here\n    return [];\n}",
+    "guidelines": "\nGuidelines:\n- You can return the answer in any order\n- You may assume that each input would have exactly one solution\n- You may not use the same element twice\n- Only one valid answer exists for each test case\n\nHints:\n- Try using a hash map to store numbers you've seen\n- For each number, check if (target - current number) exists in the hash map\n",
+    "solution": "function twoSum(nums: number[], target: number): number[] {\n    const numMap = new Map<number, number>();\n    \n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        \n        if (numMap.has(complement)) {\n            return [numMap.get(complement)!, i];\n        }\n        \n        numMap.set(nums[i], i);\n    }\n    \n    return []; // Should never reach here based on problem constraints\n}",
+    "public_test_path": "/tests/two-sum/public",
+    "hidden_test_path": "/tests/two-sum/hidden",
+    "steps": [
+      {
+        "step_id": "step-1",
+        "step_number": 1,
+        "title": "Understanding the Problem",
+        "explanation": "First, let's understand what we need to do. We have an array of numbers and a target sum. We need to find two numbers in the array that add up to the target and return their indices.",
+        "solution": "// Step 1: Understand the input and output\n// Input: nums = [2,7,11,15], target = 9\n// Output: [0,1] because nums[0] + nums[1] = 2 + 7 = 9"
+      },
+      {
+        "step_id": "step-2",
+        "step_number": 2,
+        "title": "Brute Force Approach",
+        "explanation": "The simplest approach is to check every pair of numbers. For each number, check if there's another number that adds up to the target.",
+        "solution": "function twoSum(nums: number[], target: number): number[] {\n    for (let i = 0; i < nums.length; i++) {\n        for (let j = i + 1; j < nums.length; j++) {\n            if (nums[i] + nums[j] === target) {\n                return [i, j];\n            }\n        }\n    }\n    return [];\n}"
+      },
+      {
+        "step_id": "step-3",
+        "step_number": 3,
+        "title": "Optimized Hash Map Solution",
+        "explanation": "We can optimize this using a hash map. As we iterate through the array, we store each number and its index. For each number, we check if its complement (target - current number) exists in our hash map.",
+        "solution": "function twoSum(nums: number[], target: number): number[] {\n    const numMap = new Map<number, number>();\n    \n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        \n        if (numMap.has(complement)) {\n            return [numMap.get(complement)!, i];\n        }\n        \n        numMap.set(nums[i], i);\n    }\n    \n    return [];\n}"
+      }
+    ],
+    "clos": [
+      "Understand array manipulation and indexing",
+      "Learn hash map usage for optimization",
+      "Practice problem decomposition",
+      "Understand time complexity trade-offs"
+    ],
+    "time_limit_ms": 5000,
+    "memory_limit_mb": 128,
+    "isDone": false
+  }
+]

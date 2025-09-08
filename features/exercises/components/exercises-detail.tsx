@@ -3,8 +3,6 @@
 import { BadgeQuestionMark, FileCode2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useRef } from "react";
-import ErrorAlert from "@/components/common/error-alert";
-import { PageLoading } from "@/components/common/page-loading";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -12,15 +10,15 @@ import {
 } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeEditorSettingsProvider } from "../contexts/code-editor-settings-context";
-import { useExerciseDetailSWR } from "../hooks/use-exercises-detail-swr";
+import { SAMPLE_EXERCISES } from "../utils/data";
 import CodeEditor, { type ICodeEditorRef } from "./code-editor";
 import { ExerciseDetailHeader } from "./exercise-detail-header";
 import ExerciseInfo from "./exercise-info";
 
 export const ExerciseDetail = () => {
 	const { id } = useParams<{ id: string }>();
-	const { exerciseDetail, isLoadingExerciseDetail, exerciseDetailError } =
-		useExerciseDetailSWR(id);
+	// const { exerciseDetail, isLoadingExerciseDetail, exerciseDetailError } =
+	// 	useExerciseDetailSWR(id);
 
 	const codeEditorRef = useRef<ICodeEditorRef>(null);
 
@@ -28,20 +26,22 @@ export const ExerciseDetail = () => {
 		return codeEditorRef.current?.getCurrentCode() || "";
 	};
 
-	if (isLoadingExerciseDetail) {
-		return (
-			<PageLoading variant="terminal" text="Loading exercise details..." />
-		);
-	}
+	const exerciseDetail = SAMPLE_EXERCISES[0];
 
-	if (exerciseDetailError || !exerciseDetail) {
-		return (
-			<ErrorAlert
-				title="Error loading exercise details"
-				description={"No exercise details available. Please try again"}
-			/>
-		);
-	}
+	// if (isLoadingExerciseDetail) {
+	// 	return (
+	// 		<PageLoading variant="terminal" text="Loading exercise details..." />
+	// 	);
+	// }
+
+	// if (exerciseDetailError || !exerciseDetail) {
+	// 	return (
+	// 		<ErrorAlert
+	// 			title="Error loading exercise details"
+	// 			description={"No exercise details available. Please try again"}
+	// 		/>
+	// 	);
+	// }
 
 	return (
 		<CodeEditorSettingsProvider>

@@ -42,7 +42,7 @@ const ExerciseTable = () => {
 	}
 
 	const { table } = useDataTable({
-		data: filteredExercises|| [],
+		data: filteredExercises || [],
 		columns: memoizedColumns,
 		pageCount: 1,
 		initialState: {
@@ -70,6 +70,7 @@ const ExerciseTable = () => {
 			/>
 		);
 	}
+
 	return (
 		<DataTable table={table} onRowClick={handleNavigateExercise}>
 			<DataTableToolbar table={table} />
